@@ -12,12 +12,15 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor
 @NoArgsConstructor
 public class RegisterRequest {
+    
     @Email
     @NotNull @NotBlank
     private String email;
+    
     @NotNull
     @NotBlank
     private String username;
+    
     @NotNull @NotBlank
     private String password;
 }
