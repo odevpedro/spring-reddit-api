@@ -1,4 +1,4 @@
-package com.example.springredditclone.controller.request;
+package com.example.springredditclone.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
