@@ -1,2 +1,2 @@
 # Reddit---Spring-Boot
-API que simula 
+Reddit clone in java
