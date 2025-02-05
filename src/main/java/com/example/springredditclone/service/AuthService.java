@@ -67,22 +67,24 @@ public class AuthService {
     public void verifyAccount(String token) {
         Optional<VerificationToken> verificationToken = verificationTokenRepository.findByToken(token);
         verificationToken.orElseThrow(() -> new SpringRedditException("Invalid Token"));
+        fetchUserAndEnable(verificationToken.get());
     }
         @Transactional
         public void fetchUserAndEnable(VerificationToken verificationToken) {
         String userName = verificationToken.getUser().getUsername();
         User user = userRepository.findByUsername(userName).orElseThrow(() -> new SpringRedditException("User not found with name " + userName));
-        user.setEnabled(true); //então aqui tornamos o usuário como habilitado
+        user.setEnabled(true);
         userRepository.save(user);
         }
 
     public AuthenticationResponse login(LoginRequest loginRequest) {
             Authentication authentication = authenticationManager.authenticate(
-            new UsernamePasswordAuthenticationToken(
+                    new UsernamePasswordAuthenticationToken(
                     loginRequest.getUsername(),
                     loginRequest.getPassword()));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
+        //gera um token para o usuário cadastrado
         String token = jwtProvider.generateToken(authentication);
         return new AuthenticationResponse(token, loginRequest.getUsername());
     }

@@ -3,6 +3,7 @@ package com.example.springredditclone.service;
 import com.example.springredditclone.exceptions.SpringRedditException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.User;
@@ -23,6 +24,7 @@ import static java.util.Date.from;
 public class JwtProvider {
 
     private KeyStore keyStore;
+    @Getter
     @Value("${jwt.expiration.time}")
     private Long jwtExpirationInMillis;
 
@@ -65,10 +67,12 @@ public class JwtProvider {
         }
     }
 
+
     public boolean validateToken(String jwt) {
         parser().setSigningKey(getPublickey()).parseClaimsJws(jwt);
         return true;
     }
+
 
     private PublicKey getPublickey() {
         try {
@@ -88,7 +92,4 @@ public class JwtProvider {
         return claims.getSubject();
     }
 
-    public Long getJwtExpirationInMillis() {
-        return jwtExpirationInMillis;
-    }
 }
