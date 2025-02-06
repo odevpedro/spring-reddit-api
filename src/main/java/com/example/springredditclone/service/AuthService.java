@@ -14,6 +14,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -41,7 +42,7 @@ public class AuthService {
     user.setEmail(registerRequest.getEmail());
     user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
     user.setCreated(Instant.now());
-    user.setEnabled(false);
+    user.setEnabled(false); //quando criado o usuário não está disponivel
 
     userRepository.save(user);
 
@@ -87,6 +88,14 @@ public class AuthService {
         //gera um token para o usuário cadastrado
         String token = jwtProvider.generateToken(authentication);
         return new AuthenticationResponse(token, loginRequest.getUsername());
+    }
+
+    @Transactional
+    public User getCurrentUser() {
+        org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User) SecurityContextHolder.
+                getContext().getAuthentication().getPrincipal();
+        return userRepository.findByUsername(principal.getUsername())
+                .orElseThrow(() -> new UsernameNotFoundException("User name not found - " + principal.getUsername()));
     }
 }
 
